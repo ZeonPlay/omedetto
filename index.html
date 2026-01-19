@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bocchi CTF - Rahasia Tersembunyi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(45deg, #ffcfe0, #bde0fe);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #590d22;
+        }
+        
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(255, 150, 200, 0.3);
+            border: 8px double #ff8fab;
+            margin-top: 20px;
+            position: relative;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            font-family: 'Comic Neue', cursive;
+            color: #ff4d6d;
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            text-shadow: 4px 4px 0 #ffc4d6;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: '🎀';
+            position: absolute;
+            top: -20px;
+            right: -50px;
+            font-size: 2.5rem;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            color: #a4133c;
+            margin-bottom: 25px;
+        }
+        
+        .content-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .left-column {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .right-column {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .bocchi-container {
+            background: linear-gradient(135deg, #ffafcc, #ffc8dd);
+            border-radius: 25px;
+            padding: 20px;
+            border: 6px solid #ff8fab;
+            text-align: center;
+            box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.5);
+        }
+        
+        .bocchi-img {
+            max-width: 100%;
+            border-radius: 20px;
+            border: 5px solid white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .message-box {
+            background: linear-gradient(to right, #ffccd5, #ffebf5);
+            border-radius: 25px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 5px solid #ff8fab;
+            text-align: center;
+        }
+        
+        .message-box h2 {
+            color: #c9184a;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .terminal-section {
+            background-color: #2d3047;
+            border-radius: 15px;
+            padding: 25px;
+            font-family: 'Courier New', monospace;
+            color: #f8f9fa;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 3px solid #4cc9f0;
+            overflow-x: auto;
+        }
+        
+        .terminal-title {
+            color: #4cc9f0;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .terminal-title::before {
+            content: '💻';
+        }
+        
+        .prompt {
+            color: #72efdd;
+        }
+        
+        .command {
+            color: #f72585;
+        }
+        
+        .comment {
+            color: #adb5bd;
+            font-style: italic;
+        }
+        
+        .output {
+            color: #bde0fe;
+            margin-left: 20px;
+        }
+        
+        .step-box {
+            background-color: #f8f9ff;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 8px solid #a2d2ff;
+        }
+        
+        .step-number {
+            display: inline-block;
+            background-color: #4361ee;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            margin-right: 15px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .step-title {
+            color: #3a0ca3;
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+        
+        .ctf-hint {
+            background-color: #ffebf5;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 25px 0;
+            border: 4px dashed #ffafcc;
+            text-align: center;
+        }
+        
+        .ctf-hint h3 {
+            color: #ff4d6d;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .ctf-hint h3::before {
+            content: '🔍';
+        }
+        
+        .floating-icons {
+            position: absolute;
+            font-size: 2.5rem;
+            z-index: -1;
+            animation: float 6s infinite ease-in-out;
+        }
+        
+        .icon-1 { top: 50px; left: 50px; animation-delay: 0s; color: #ffafcc; }
+        .icon-2 { top: 100px; right: 80px; animation-delay: 1s; color: #a2d2ff; }
+        .icon-3 { bottom: 100px; left: 70px; animation-delay: 2s; color: #ffc8dd; }
+        .icon-4 { bottom: 50px; right: 60px; animation-delay: 3s; color: #cdb4db; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-25px) rotate(5deg); }
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #6d6875;
+            font-size: 0.9rem;
+            border-top: 2px dotted #ffafcc;
+            padding-top: 20px;
+            width: 100%;
+        }
+        
+        .secret-message {
+            color: rgba(89, 13, 34, 0.1);
+            font-size: 0.8rem;
+            position: absolute;
+            bottom: 15px;
+            right: 20px;
+            transition: color 0.3s;
+        }
+        
+        .secret-message:hover {
+            color: #590d22;
+        }
+        
+        @media (max-width: 768px) {
+            .content-section {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            h1::after {
+                font-size: 1.8rem;
+                right: -40px;
+                top: -15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-icons">🌸</div>
+    <div class="floating-icons">✨</div>
+    <div class="floating-icons">🎀</div>
+    <div class="floating-icons">🎈</div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>Bocchi CTF Adventure</h1>
+            <p class="subtitle">Temukan rahasia yang tersembunyi di balik senyum Bocchi! 🎸</p>
+        </div>
+        
+        <div class="content-section">
+            <div class="left-column">
+                <div class="bocchi-container">
+                    <img src="bocchi.png" alt="Bocchi" class="bocchi-img">
+                    <p style="margin-top: 15px; color: #a4133c; font-weight: bold;">Bocchi siap membantu petualangan CTF-mu! 💫</p>
+                </div>
+                
+                <div class="message-box">
+                    <h2>Selamat! 🎉</h2>
+                    <p style="font-size: 1.3rem; color: #800f2f;">(padahal masih ada satu step lagi)</p>
+                    <p style="margin-top: 15px; font-size: 1.2rem;">Kamu berhasil menemukan website ini! Sekarang saatnya mencari petunjuk tersembunyi...</p>
+                </div>
+                
+                <div class="ctf-hint">
+                    <h3>Panduan CTF</h3>
+                    <p style="font-size: 1.2rem; color: #800f2f; margin-bottom: 10px;">Untuk menyelesaikan challenge ini:</p>
+                    <ol style="text-align: left; padding-left: 20px; font-size: 1.1rem;">
+                        <li style="margin-bottom: 8px;">Cek metadata gambar bocchi.png yang kamu terima</li>
+                        <li style="margin-bottom: 8px;">Dekripsi password yang ditemukan</li>
+                        <li style="margin-bottom: 8px;">Kunjungi URL hasil dekripsi (website ini)</li>
+                        <li style="margin-bottom: 8px;">Inspect element untuk petunjuk selanjutnya</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="right-column">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Enkripsi URL di Terminal</div>
+                    <p>Gunakan terminal untuk meng-enkripsi URL website ini:</p>
+                    
+                    <div class="terminal-section">
+                        <div class="terminal-title">Enkripsi Base64 + ROT13</div>
+                        <p><span class="prompt">$</span> <span class="command">echo -n "https://yourwebsite.com" | base64</span></p>
+                        <p class="output"># Hasil Base64: aHR0cHM6Ly95b3Vyd2Vic2l0ZS5jb20=</p>
+                        <br>
+                        <p><span class="prompt">$</span> <span class="command">echo "aHR0cHM6Ly95b3Vyd2Vic2l0ZS5jb20=" | tr 'A-Za-z' 'N-ZA-Mn-za-m'</span></p>
+                        <p class="output"># Hasil ROT13: aUGgHCHfN6YyFe91H9jR6HB/F92dXVi9yYg==</p>
+                        <br>
+                        <p class="comment"># String terakhir adalah password untuk metadata gambar</p>
+                    </div>
+                </div>
+                
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Tambahkan ke Metadata Gambar</div>
+                    <p>Gunakan exiftool untuk menyisipkan password:</p>
+                    
+                    <div class="terminal-section">
+                        <div class="terminal-title">Tambahkan Metadata</div>
+                        <p><span class="prompt">$</span> <span class="command">exiftool -Comment="aUGgHCHfN6YyFe91H9jR6HB/F92dXVi9yYg==" bocchi.png</span></p>
+                        <p class="output"># Password berhasil ditambahkan ke field Comment</p>
+                        <br>
+                        <p><span class="prompt">$</span> <span class="command">exiftool -ImageDescription="CTF Password: aUGgHCHfN6YyFe91H9jR6HB/F92dXVi9yYg==" bocchi.png</span></p>
+                        <p class="output"># Atau tambahkan ke field ImageDescription</p>
+                    </div>
+                </div>
+                
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Verifikasi Metadata</div>
+                    <p>Cek apakah password sudah tersimpan:</p>
+                    
+                    <div class="terminal-section">
+                        <div class="terminal-title">Baca Metadata</div>
+                        <p><span class="prompt">$</span> <span class="command">exiftool bocchi.png | grep -E "(Comment|ImageDescription)"</span></p>
+                        <p class="output"># Comment: aUGgHCHfN6YyFe91H9jR6HB/F92dXVi9yYg==</p>
+                        <p class="output"># ImageDescription: CTF Password: aUGgHCHfN6YyFe91H9jR6HB/F92dXVi9yYg==</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Bocchi CTF Challenge &copy; 2023 | Dibuat dengan 💖 untuk edukasi keamanan siber</p>
+            <p style="margin-top: 10px; font-size: 0.8rem; color: #9d8189;">"The best hiding spots are often in plain sight"</p>
+        </div>
+    </div>
+    
+    <!-- 
+        =================================================================
+                            BAGIAN CTF TERSEMBUNYI
+        =================================================================
+        
+        SELAMAT! Kamu telah menemukan komentar HTML yang tersembunyi.
+        
+        Langkah selanjutnya dari challenge ini adalah:
+        1. Hubungi nomor WhatsApp berikut: +62 812-3456-7890
+        2. Kirimkan kode rahasia: "BOCCHI_EXIF_MASTER_2023"
+        3. Tunggu instruksi selanjutnya!
+        
+        Flag untuk tahap ini: flag{bocchi_html_comment_hunter}
+        
+        =================================================================
+        Catatan untuk admin: Ganti nomor WhatsApp di atas dengan nomormu!
+        =================================================================
+    -->
+    
+    <!-- File penting: flag{inspect_element_is_key_to_success} -->
+    
+    <div style="display: none;">
+        <!-- 
+            Data CTF tambahan:
+            - Creator: [Nama Kamu]
+            - Contact: [Nomor WhatsApp Kamu]
+            - Next Challenge: Pesan WhatsApp dengan kode tertentu
+            - Final Flag: flag{you_completed_bocchi_ctf_challenge}
+        -->
+    </div>
+    
+    <div class="secret-message">
+        <!-- Pssst... ada sesuatu di inspect element -->
+    </div>
+
+    <script>
+        // Animasi dan efek untuk website
+        document.addEventListener('DOMContentLoaded', function() {
+            // Efek ketik untuk subtitle
+            const subtitle = document.querySelector('.subtitle');
+            const originalText = subtitle.textContent;
+            subtitle.textContent = '';
+            
+            let i = 0;
+            function typeWriter() {
+                if (i < originalText.length) {
+                    subtitle.textContent += originalText.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 50);
+                }
+            }
+            
+            setTimeout(typeWriter, 1000);
+            
+            // Efek highlight pada terminal commands
+            const commands = document.querySelectorAll('.command');
+            commands.forEach(cmd => {
+                cmd.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#4a4e69';
+                    this.style.padding = '2px 5px';
+                    this.style.borderRadius = '3px';
+                });
+                
+                cmd.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = 'transparent';
+                    this.style.padding = '0';
+                });
+            });
+            
+            // Console message untuk CTF
+            console.log('%c🎮 BOCCHI CTF CONSOLE 🎮', 'color: #ff4d6d; font-size: 22px; font-weight: bold;');
+            console.log('%cWebsite ini berisi petunjuk untuk CTF challenge!', 'color: #4361ee; font-size: 14px;');
+            console.log('%cJangan lupa cek inspect element untuk bagian tersembunyi.', 'color: #3a0ca3; font-size: 14px;');
+            console.log('%cFlag console: flag{bocchi_console_explorer}', 'color: #f72585; background: #ffccd5; padding: 5px; font-size: 14px;');
+            
+            // Random color untuk title
+            const title = document.querySelector('h1');
+            const colors = ['#ff4d6d', '#ff8fab', '#ffafcc', '#a2d2ff', '#cdb4db'];
+            let currentColor = 0;
+            
+            setInterval(() => {
+                title.style.color = colors[currentColor];
+                title.style.textShadow = `4px 4px 0 ${colors[(currentColor + 1) % colors.length]}`;
+                currentColor = (currentColor + 1) % colors.length;
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
